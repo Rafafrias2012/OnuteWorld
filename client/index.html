@@ -1,0 +1,191 @@
+<html>
+<head>
+<title> OnuteWorld </title>
+<style>
+body{
+    font-family: arial;
+    background-color: #9944dd;
+}
+#eggyform{
+    position: fixed;
+    background-color: #7744aa;
+    top: 32%;
+    color: white;
+    left: 50%;
+    line-height: 15px;
+    font-size: 20px;
+    transform: translate(-50%,-50%);
+    padding: 10px 15px;
+    min-height: 370px;
+    min-width: 500px;
+}
+#name,#room{
+    width: 100%;
+    font-size:30px;
+    padding: 5px;
+    border:none;
+    color:white;
+    background-color:#552288;
+}
+#subname{
+     min-width: 100px;
+    font-size:32px;
+    padding: 5px 15px;
+    border:none;
+    position:absolute;
+    color:white;
+    bottom:10px;
+    background-color:#9944dd;
+}
+#subname:hover{
+    color:black;
+    background-color:white;
+}
+.other{
+    position: fixed;
+    background-color: #999988;
+    top: calc(32% + 220px);
+    color: white;
+    left: 50%;
+    line-height: 5px;
+    font-size: 20px;
+    transform: translate(-50%);
+    padding: 10px 15px;
+    min-height: 100px;
+    min-width: 300px;
+}
+a{
+    color:white;
+}
+a:hover{
+    color:gray;
+}
+#server{
+position:fixed;
+bottom:20px;
+right:5px;
+color:white;
+}
+</style>
+</head>
+<body>
+<div id=out style="width:100%; height: 100%; display: none;"><p id=server>Server: connecting...</p>
+<div action="javascript:send()" id=chat style="position:fixed;bottom:0%; height:40px;width:100%;left:0px;"><form action="javascript:send()"><input style="height:30px;font-size:22px;position:absolute;bottom:0px;width:90%;background-color:white;" id=eggmsg><input type=submit style="height:30px;font-size:22px;position:absolute;right:0px;bottom:0px;width:10%;"></form></div><div id=outr style="width:100%;left:0px;height:100%;"></div> </div>
+<form action="javascript:starteverything()" id=eggyform>
+<center> <h1> OnuteWorld V2.1.1 </h1></center>
+<h2>Nickname</h2><input id="name">
+<h2> room </h2>
+<input id="room">
+<a href="javascript:changeval()" ><h3> connect to other server </h3></a>
+<br><input id=subname type=submit></form><div class=other id=othershit> 
+<center><h2> Other Shit </h2></center>
+<a href="https://eggyprojects.ml" target="_blank"><h4> check out my site (eggy)</h4></a>
+<a href="https://discord.gg/r7U3jZcWv6" target="_blank"><h4> Join the discord</h4></a>
+<a href="https://bonkeyword.tk" target="_blank"><h4> BonkeyWord </h4></a>
+</div>
+</body>
+<script>
+var ws;
+var kicked = 0;
+var objegg;
+var server = "ws://onute.world:6969";
+err = undefined;
+function changeval(){
+server2 = prompt("Server URL including port if its not 80\neg: wss://onute.funy.tk");
+if(server2!==null){
+server = server2;
+}
+}
+function starteverything(){
+
+document.getElementById("othershit").style.display = "none";
+
+document.getElementById("outr").addEventListener("mouseup", (mouse)=>{
+ws.send("location:" + mouse.clientX);
+ws.send("locationy:" + mouse.clientY);
+})
+
+ws = new WebSocket(server);
+ws.onopen = ()=>{
+    
+document.getElementById("server").innerHTML = "Server: "+server;
+if(document.getElementById("room").value == ""){
+ws.send("room:main");
+} else{
+ws.send("room:" + document.getElementById("room").value);
+}
+    if (document.getElementById("name").value == ""){
+ws.send("name:Anonymous");
+    }else{
+    ws.send('name:' + document.getElementById("name").value.replace(":",""));
+    }
+}
+ws.onclose = ()=>{
+    ws = undefined;
+    if (kicked == 0 && err == undefined){
+
+document.getElementById("eggyform").style.display = "block";
+document.getElementById("out").style.display = "none";
+    alert('you got disconnected cuz servers fucked try again later');
+} else if(err !== undefined){
+if(err == 101){
+alert("server full, try again later");
+document.getElementById("out").style.display = "none";
+
+document.getElementById("othershit").style.display = "block";
+document.getElementById("eggyform").style.display ="block";
+} else if(err == 102){
+alert("STOP WITH THE ALTS");
+document.getElementById("out").style.display = "none";
+
+document.getElementById("othershit").style.display = "block";
+document.getElementById("eggyform").style.display ="block";
+document.getElementById("eggyform").innerHTML = "<center><h1> onuteWorld </h1>MAX LIMIT PER IP REACHED!!!</center>";
+}
+} else{
+    alert('you got fucking kicked');
+document.getElementById("out").style.display = "none";
+
+document.getElementById("eggyform").style.display = "block";
+
+document.getElementById("eggyform").innerHTML = "<center><h1> onuteWorld </h1>youre not getting in that easily you fucking fag</center>";
+}
+}
+document.getElementById("eggyform").style.display = "none";
+document.getElementById("out").style.display = "block";
+ws.onmessage = data=>{
+if (data.data.toString().includes("{")){
+    objegg = JSON.parse(data.data);
+    
+    document.getElementById("outr").innerHTML = "";
+        Object.keys(objegg).forEach(egg=>{
+            if (parseInt(objegg[egg][1]) >= innerWidth - 140 && parseInt(objegg[egg][2]) >= innerHeight - 220){
+ document.getElementById("outr").innerHTML += "<div style='width:100px;overflow-wrap:break-word;color:black;font-family:arial;height:170px;padding:10px; position:fixed;left:"+ (innerWidth - 140)+";top:"+(innerHeight - 220)+";'>"+objegg[egg][0]+"<div style='border-style:solid;overflow-wrap:break-word;overflow-y:scroll;padding:0px 9px;min-height:40px;max-height:100px;width:100px;border-color:black;border-width:1px;'>"+objegg[egg][3]+"</div><img src=skins/"+objegg[egg][4]+".png style='font-family:arial;color:white;height:120px; width:120px;bottom:0px;'></div>";
+            } else if(parseInt(objegg[egg][1]) >= innerWidth - 140 || parseInt(objegg[egg][2]) >= innerHeight - 320){
+                if(parseInt(objegg[egg][1]) >= innerWidth-140){
+ document.getElementById("outr").innerHTML += "<div style='width:100px;color:black;overflow-wrap:break-word;font-family:arial;height:170px;padding:10px; position:fixed;left:"+ (innerWidth - 140)+";top:"+objegg[egg][2]+";'>"+objegg[egg][0]+"<div style='border-style:solid;overflow-wrap:break-word;overflow-y:scroll;padding:0px 9px;min-height:40px;max-height:100px;width:100px;border-color:black;border-width:1px;'>"+objegg[egg][3]+"</div><img src=skins/"+objegg[egg][4]+".png style='font-family:arial;color:white;height:120px; width:120px;bottom:0px;'></div>";
+                }
+                if (parseInt(objegg[egg][2]) >= innerHeight-320){
+                     document.getElementById("outr").innerHTML += "<div style='width:100px;overflow-wrap:break-word;color:black;font-family:arial;height:170px;padding:10px; position:fixed;left:"+ objegg[egg][1]+";top:"+(innerHeight - 320)+";'>"+objegg[egg][0]+"<div style='border-style:solid;overflow-wrap:break-word;overflow-y:scroll;padding:0px 9px;min-height:40px;max-height:100px;width:100px;border-color:black;border-width:1px;'>"+objegg[egg][3]+"</div><img src=skins/"+objegg[egg][4]+".png style='font-family:arial;color:white;height:120px; width:120px;bottom:0px;'></div>";
+                }
+                }
+                else{
+        document.getElementById("outr").innerHTML += "<div style='width:100px;color:black;overflow-wrap:break-word;font-family:arial;height:170px;padding:10px; position:fixed;left:"+ objegg[egg][1]+";top:"+objegg[egg][2]+";'>"+objegg[egg][0]+"<div style='border-style:solid;overflow-wrap:break-word;overflow-y:scroll;padding:0px 9px;min-height:40px;max-height:100px;width:100px;border-color:black;border-width:1px;'>"+objegg[egg][3]+"</div><img src=skins/"+objegg[egg][4]+".png style='font-family:arial;color:white;height:120px; width:120px;bottom:0px;'></div>";
+            }
+    })
+
+} else if (data.data == "kicked"){
+    kicked =1;
+} else if(data.data == "maxiplimit"){
+err = 102;
+} else if(data.data == "maxlimit"){
+err = 101;
+}
+}
+}
+function send(){
+    ws.send(document.getElementById("eggmsg").value.replace("name:","name"));
+    document.getElementById("eggmsg").value = "";
+}
+</script>
+</html>
