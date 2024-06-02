@@ -1,6 +1,6 @@
-var ws = require("ws");
-var config = require("./config.js");
-var server = new ws.Server({port: config.port});
+const ws = require("ws");
+const config = require("./config.js");
+const server = new ws.Server({port: config.port});
 var clients = [];
 var count = 0;
 var countip = {
